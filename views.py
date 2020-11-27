@@ -1,12 +1,31 @@
-from django.shortcuts import render
-from cardlist.models import Card
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib import auth
 
-def index(request):
-    latest_card_list = Card.objects.all().order_by('card_id')[:55]
-    context = {'latest_card_list':latest_card_list}
-    return render(request, 'cardlist/index.html', context)
+def signup(request):
+    if request.method == "POST":
+        if request.POST["passwd1"] == request.POST["passwd2"]:
+            user = User.objects.create_user(
+                username=request.POST["username"], password=request.POST["passwd1"])
+            auth.login(request,user)
+            return redirect('index')
+        return render(request,'accounts/signup.html')
+    return render(request, 'accounts/signup.html')
 
-def detail(request, card_id):
-    row = Card.objects.get(pk = card_id)
-    return render(request, 'cardlist/detail.html', {'row': row})
-        # Create your views here.
+def login(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        passwd = request.POST["passwd"]
+        user = auth.authenticate(request, username=username, passwd=passwd)
+        if user is not None:
+            auth.login(request, user)
+            return redirect('index')
+        else:
+            return render(request, 'accounts/login.html', {'error': 'username or passwd is incorrect'})
+    else:
+        return render(request, 'accounts/login.html')
+
+def logout(request):
+    auth.logout(request)
+    return redirect('index')
+# Create your views here.
