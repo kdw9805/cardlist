@@ -1,0 +1,30 @@
+<style>
+a { text-decoration:none ; color:#000000}
+</style>
+
+<h1>카드 목록</h1>
+<div style="float: right">
+    <a href = "/accounts/signup">회원가입</a>
+<a href = "/accounts/login/">로그인</a>
+<a href = "/accounts/logout/">로그아웃</a>
+</div>
+<a href = "/cardlist/choice/">덱 생성</a>
+|사용자: {{ user.username }}|
+<table border="cardview">
+    {% if latest_card_list %}
+    <ul>
+        <tr>
+            {% for card in latest_card_list %}
+                {% if forloop.counter0|divisibleby:5 %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                <td width="500"><p align=center><a href = "/cardlist/{{card.card_id}}/">{{ card.card_name }}</a></p></td>
+            {% endfor %}
+        </tr>
+    </ul>
+
+</table>
+{% else %}
+    <p>No Card are availabe</p>
+{% endif %}
